@@ -1,5 +1,5 @@
-# Death Registry Data
+# starter_folder
 
-# By: Chloe Thierstein
+This repo....
 
-#oogly
+It is organised as follows...
