@@ -1,5 +1,5 @@
 ---
-title: "My title"
+title: "Death Registry Analysis"
 subtitle: "My subtitle if needed"
 author: "Chloe Thierstein"
 thanks: "Code and data are available at: https://github.com/cthierst/death_registry_analysis.git."
@@ -11,105 +11,260 @@ bibliography: references.bib
 ---
 
 ```{r}
-#| include: FALSE
+#| include: false
 
-knitr::opts_chunk$set(echo = TRUE)
+#### Workspace Set-up ####
+
 
 library(tidyverse)
-library(palmerpenguins)
+library(opendatatoronto)
+library(janitor)
+library(ggplot2)
+library(dplyr)
+library(knitr)
 ```
-
 
 # Introduction
 
-You can and should cross-reference sections and sub-sections. For instance, Section \@ref(data). Quarto automatically makes the sections lower case and adds a dash to spaces to generate labels, for instance, Section \@ref(first-discussion-point). 
+{two or three paragraphs of content. and there should be an additional final paragraph that sets out the remainder of the paper}
 
+You can and should cross-reference sections and sub-sections. For instance, Section \@ref(data). Quarto automatically makes the sections lower case and adds a dash to spaces to generate labels, for instance, Section \@ref(first-discussion-point).
 
+"This dataset includes information relating to the registration of deaths documented by Registry Services staff located in four of the civic centres (Scarborough, North York, Toronto and Etobicoke). Registration of death data is entered into the Registry Services Tracking System (RSTS), from which aggregate statistical information is generated to create the dataset. The dataset resides in an Oracle database in the City's environment.
+
+The dataset is created in support of the Vital Statistics Act, which is a Provincial legislation. The dataset also supports the City's operational requirements and business functions." [@citeopendatatoronto]
+
+"\_id = unique row identifier for Open Data database
+
+civic_centre = civic centre code
+
+death licenses = number of deaths registered in the month
+
+place_of_death = place where death occurred
+
+time_period = month death registered" [@citeopendatatoronto]
+
+\-\--
+
+In this paper I will be analyzing death registry data from four civic centers in the greater Toronto area, Etobicoke, North York, Scarborough, and Toronto. First, I will compare rates of death registration from these civic centers over the period of 2011-2022. Next, I will compare rates of death registration against place of death in order to discuss the rate of deaths inside and outside the Toronto city limits. Finally, I will discuss trends in death registrations from each civic center. My analysis will be performed using R [@citeR], tidyverse [@citetidyverse], janitor [@citejanitor], and dplyr [@citedplyr] packages. All figures in my paper have been created using ggplot2 [@citeggplot2] and tables have been created with \_\_\_\_\_\_
 
 # Data
 
-Our data is of penguins (@fig-bills).
+data section should thoroughly and precisely discuss the source of the data and the bias this brings (ethical, statistical, and otherwise). comprehensively describe and summarize the data using text, graphs, and tables must be made iwth knitr or gt. graphs must show the actual data, or as close to it as possible, not summary statistics. (Graphs and tables should be cross-references in the text e.g., 'Table 1 shows...')
 
 ```{r}
-#| label: fig-bills
-#| fig-cap: Bills of penguins
+#| include: FALSE
+
+#### Read in Data ####
+raw_death_registry_data <-
+  read_csv(
+    file = 
+      "https://ckan0.cf.opendata.inter.prod-toronto.ca/dataset/cba07a90-984b-42d2-9131-701c8c2a9788/resource/cc418325-b3d0-4afd-ae64-ccb9b71c549c/download/Death%20Registry%20Statistics%20Data.csv",
+    show_col_types = FALSE,
+    skip = 0
+  )
+
+write_csv(
+  x = raw_death_registry_data,
+  file = "death_registry.csv"
+)
+
+
+
+```
+
+```{r}
+#| include: false
+#### Clean Names ####
+cleaned_death_registry_data <-
+  clean_names(raw_death_registry_data)
+
+head(cleaned_death_registry_data)
+
+
+#### Simplifying Date #### 
+cleaned_death_registry_data <-
+  cleaned_death_registry_data |>
+  separate(
+    col = time_period,
+    into = c("year", "month"),
+    sep = "-"
+  ) |>
+  select(civic_centre, death_licenses, place_of_death, year, month)
+
+#### Removing 2021-2022 rows ####
+cleaned_death_registry_data <- cleaned_death_registry_data[-c(746:841), ] 
+
+#### Recoding Months to be more Meaningful ####
+cleaned_death_registry_data <- cleaned_death_registry_data |> 
+  mutate( 
+    month = 
+      recode( 
+        month, 
+        "01" = "Jan", 
+        "02" = "Feb", 
+        "03" = "Mar",
+        "04" = "Apr",
+        "05" = "May",
+        "06" = "Jun",
+        "07" = "Jul",
+        "08" = "Aug",
+        "09" = "Sep",
+        "10" = "Oct",
+        "11" = "Nov",
+        "12" = "Dec"
+      ) 
+  )
+
+#### Recoding Civic Centres to be more Meaningful ####
+cleaned_death_registry_data <- cleaned_death_registry_data |> 
+  mutate( 
+    civic_centre = 
+      recode( 
+        civic_centre, 
+        "ET" = "Etobicoke", 
+        "NY" = "North York", 
+        "SC" = "Scarborough", 
+      ) 
+  )
+
+cleaned_death_registry_data <- cleaned_death_registry_data |>
+  filter(!grepl('TO', civic_centre))
+
+#### Ordering Months #####
+cleaned_death_registry_data$month <- factor(cleaned_death_registry_data$month, levels=c("Jan", "Feb","Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))
+
+
+
+```
+
+```{r}
 #| echo: false
 
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = "none") +
+#### Creating Graph ####
+ggplot(data=cleaned_death_registry_data, aes(x = month, y = death_licenses, fill = month)) +
   theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Month",
+    y = "Death Licenses"
+  ) +
+  theme(legend.position = "none") +
+  scale_fill_brewer(palette="Set3")
+
+```
+
+```{r}
+#| echo: false
+
+#### Creating Graph ####
+ggplot(data=cleaned_death_registry_data, aes(x = month, y = death_licenses, fill = year)) +
+  theme_minimal() +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Month",
+    y = "Death Licenses"
+  ) +
+  scale_fill_brewer(palette="Set3")
+
+```
+
+```{r}
+#| echo: false
+
+#### Creating Graph ####
+ggplot(data=cleaned_death_registry_data, aes(x = year, y = death_licenses, fill = month)) +
+  theme_minimal() +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "year",
+    y = "Death Licenses"
+  ) +
+  scale_fill_brewer(palette="Set3")
+```
+
+```{r}
+#| echo: false
+
+#### Creating Graph ####
+ggplot(data=cleaned_death_registry_data, aes(x = year, y = death_licenses, fill = year)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() + 
+  labs(
+    x = "Year",
+    y = "Death Licenses"
+  ) +
+  theme(legend.position = "none")+
+  scale_fill_brewer(palette="Set3")
+
+```
+
+```{r}
+#| echo: false 
+
+options(scipen=999)
+#### Creating Graph ####
+ggplot(data=cleaned_death_registry_data, aes(x = place_of_death, y = death_licenses, fill = place_of_death)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  labs(
+    x = "Place of Death",
+    y = "Death Licenses"
+  ) +
+  theme(legend.position = "none")+
+  scale_fill_brewer(palette="Set2")
+```
+
+```{r}
+#| echo: false
+#### Creating Graph ####
+ggplot(data=cleaned_death_registry_data, aes(x = civic_centre, y = death_licenses, fill = civic_centre)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() + 
+  labs(
+    x = "Civic Centre",
+    y = "Death Licenses"
+  )+
+  scale_fill_brewer(palette="Set2")+
+  theme(legend.position = "none")
+```
+
+```{r}
+#| echo: false
+#### Creating Graph ####
+ggplot(data=cleaned_death_registry_data, aes(x = year, y = death_licenses, fill = civic_centre)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() + 
+  labs(
+    x = "Year",
+    y = "Death Licenses"
+  )+
+  scale_fill_brewer(palette="Set2")
+```
+
+```{r}
+#| echo: false
+#### Creating Graph ####
+ggplot(data=cleaned_death_registry_data, aes(x = month, y = death_licenses, fill = civic_centre)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() + 
+  labs(
+    x = "Month",
+    y = "Death Licenses"
+  ) +
+  scale_fill_brewer(palette="Set2")
 ```
 
 Talk more about it.
 
-Also bills and their average (@fig-billssssss). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work.)
+Also bills and their average . (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work.)
 
-```{r}
-#| label: fig-billssssss
-#| fig-cap: More bills of penguins
-#| echo: false
-#| fig-width: 8
-#| fig-height: 4
-
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = FALSE) +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
-```
-
-Talk way more about it. 
-
-
-
-# Model
-
-$$
-Pr(\theta | y) = \frac{Pr(y | \theta) Pr(\theta)}{Pr(y)}
-$$ {#eq-bayes}
-
-@eq-bayes seems useful, eh?
-
-Here's a dumb example of how to use some references: In paper we run our analysis in `R` [@citeR]. We also use the `tidyverse` which was written by @thereferencecanbewhatever If we were interested in baseball data then @citeLahman could be useful. 
-
-We can use maths by including latex between dollar signs, for instance $\theta$.
-
-
-# Results
-
-# Discussion
-
-## First discussion point
-
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
-
-## Second discussion point
-
-## Third discussion point
-
-## Weaknesses and next steps
-
-Weaknesses and next steps should also be included.
+Talk way more about it.
 
 \newpage
-
-\appendix
-
-# Appendix {-}
-
-
-# Additional details
-
-
-\newpage
-
 
 # References
 
+references should be added using BibTeX. be sure to reference R and any R packages you use, as well as the dataset. strong submissions will draw on related literature and reference those.
 
+\-\-\--
