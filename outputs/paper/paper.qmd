@@ -12,17 +12,7 @@ bibliography: references.bib
 ```{r}
 #| include: false
 
-#### Workspace Set-up ####
-
-#### install.packages(tidyverse) ####
-#### install.packages(janitor) ####
-#### install.packages(ggplot2) ####
-#### install.packages("knitr") ####
-#### install.packages("RColorBrewer") ####
-#### install.packages("kableExtra") ####
-#### install.packages("bookdown") ####
-#### install.packages("rmarkdown") ####
-#### install.packages("patchwork") ####
+#### workspace set-up ####
 
 library(tidyverse)
 library(opendatatoronto)
@@ -34,7 +24,14 @@ library(RColorBrewer)
 library(kableExtra)
 library(bookdown)
 library(patchwork)
+library(readr)
+library(here)
 
+#### import cleaned_death_registry.csv ####
+cleaned_death_registry_data <- read.csv(here::here("/Users/chloethierstein/Desktop/death_registry_analysis/inputs/data/cleaned_death_registry.csv"))
+
+#### turning years into factor ####
+cleaned_death_registry_data$Year <- as.factor(cleaned_death_registry_data$Year)
 ```
 
 # Introduction
@@ -59,7 +56,9 @@ data section should thoroughly and precisely discuss the source of the data and 
 
 \-\-\-\-\-\-\-\-\-\-\--
 
-Analysis for this paper utilizes R the statistical programming language [@citeR], along with several packages. These packages are, tidyverse [@citetidyverse], janitor [@citejanitor], and dplyr [@citedplyr]. The data I am analyzing come from Open Data Toronto and it is imported using the opendatatoronto package [@citeopendatatoronto]. **All figures in this paper have been created using ggplot2 [@citeggplot2] and the tables have been created with knitr [@citeknitr] and kableExtra [@citekablextra], packages. The color styles in my graph were created by using the RColorBrewer [@citercolorbrewer] package and any graph combinations were made using the Patchwork [@citepatchwork] package.**
+Analysis for this paper utilizes R the statistical programming language [@citeR], along with several packages. These packages are, tidyverse [@citetidyverse], janitor [@citejanitor], and dplyr [@citedplyr]. The data I am analyzing come from Open Data Toronto and it is imported using the opendatatoronto package [@citeopendatatoronto]. **
+
+All figures in this paper have been created using ggplot2 [@citeggplot2] and the tables have been created with knitr [@citeknitr] and kableExtra [@citekablextra], packages. The color styles in my graph were created by using the RColorBrewer [@citercolorbrewer] package and any graph combinations were made using the Patchwork [@citepatchwork] package.**
 
 \-\-\-\-\-\-\-\-\-\-\--
 
@@ -91,103 +90,7 @@ time_period = month death registered" [@citeopendatatoronto]
 
 \-\-\-\-\-\-\-\-\-\-\-\-\-\--
 
-```{r}
-#| include: FALSE
-
-#### Read in Data ####
-
-raw_death_registry_data <-
-  read_csv(
-    file = 
-      "https://ckan0.cf.opendata.inter.prod-toronto.ca/dataset/cba07a90-984b-42d2-9131-701c8c2a9788/resource/cc418325-b3d0-4afd-ae64-ccb9b71c549c/download/Death%20Registry%20Statistics%20Data.csv",
-    show_col_types = FALSE,
-    skip = 0
-  )
-
-#### Creating a CSV File for Raw Data ####
-write_csv(
-  x = raw_death_registry_data,
-  file = "death_registry.csv" #create raw data .csv file and store it in inputs folder
-)
-
-
-
-```
-
-```{r}
-#| include: false
-
-#### Data Cleaning ####
-
-#### Clean Names ####
-cleaned_death_registry_data <-
-  clean_names(raw_death_registry_data)
-
-#### Simplifying Date #### 
-cleaned_death_registry_data <-
-  cleaned_death_registry_data |>
-  separate(
-    col = time_period,
-    into = c("Year", "Month"),
-    sep = "-"
-  ) |>
-  select(civic_centre, death_licenses, place_of_death, Year, Month)
-
-#### Removing 2011-2015 and 2021-2023 Data for Relevance ####
-cleaned_death_registry_data <- cleaned_death_registry_data[-c(1:371,746:847), ] 
-
-#### Recoding Months to be More Meaningful ####
-cleaned_death_registry_data <- cleaned_death_registry_data |> 
-  mutate( 
-    Month = 
-      recode( 
-        Month, #abbreviated months to better fit graphs withotu losing meaning
-        "01" = "Jan", 
-        "02" = "Feb", 
-        "03" = "Mar",
-        "04" = "Apr",
-        "05" = "May",
-        "06" = "Jun",
-        "07" = "Jul",
-        "08" = "Aug",
-        "09" = "Sep",
-        "10" = "Oct",
-        "11" = "Nov",
-        "12" = "Dec"
-      ) 
-  )
-
-#### Recoding Civic Centres to be More Meaningful ####
-cleaned_death_registry_data <- cleaned_death_registry_data |> 
-  mutate( 
-    civic_centre = 
-      recode( 
-        civic_centre, 
-        "ET" = "Etobicoke", 
-        "NY" = "North York", 
-        "SC" = "Scarborough", 
-      ) 
-  )
-
-#### Ordering Months #####
-cleaned_death_registry_data$Month <- factor(cleaned_death_registry_data$Month, levels=c("Jan", "Feb","Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))
-
-
-#### Filtering Out "Toronto" Civic Centre from Data Due to Missing Data ####
-cleaned_death_registry_data <- cleaned_death_registry_data |>
-  filter(!grepl('TO', civic_centre))
-
-#### Creating a CSV File for Cleaned Data ####
-write_csv(
-  x = cleaned_death_registry_data,
-  file = "cleaned_death_registry.csv"  #create cleaned data .csv file and store it in inputs folder
-)
-
-
-
-```
-
-([@fig-deathlicensesbymonthandyear])
+(@fig-deathlicensesbymonthandyear)
 
 ```{r}
 #| echo: false
@@ -229,6 +132,7 @@ ggplot(data=cleaned_death_registry_data, aes(x = Year, y = death_licenses, fill 
 
 ```{r}
 #| include: false
+#| message: false
 
 
 #### Creating Graph to Compare Months Against Death Licenses Given Out From 2016-2020 From Each Civic Centre ####
@@ -242,9 +146,16 @@ month_by_death_license <- ggplot(data=cleaned_death_registry_data, aes(x = Month
     fill = "Civic Centre"
   ) +
   scale_fill_brewer(palette="Set2")+
-  theme(legend.position = "none") + #remove legend as next graph will have it for better readability
-    theme(axis.title.y = element_text(size = 10))+
-    theme(axis.title.x = element_text(size = 10))
+  theme(legend.position = "none") + #include legend at bottom to ensure readability when using patchwork package
+  theme(axis.title.y = element_text(size = 10)) +
+  theme(axis.title.x = element_text(size = 10))
+
+
+```
+
+```{r}
+#| include: false
+#| message: false
 
 #### Creating Graph to Compare Years Against Death Licenses Given Out From 2016-2020 From Each Civic Centre ####
 
@@ -261,6 +172,7 @@ year_by_death_license <-  ggplot(data=cleaned_death_registry_data, aes(x = Year,
   theme(axis.title.y = element_text(size = 10))+
   theme(axis.title.x = element_text(size = 10))
 ```
+
 
 ```{r}
 #| echo: false
@@ -352,32 +264,38 @@ et_all_avg_num_deaths_by_month_data <-
 
 ```
 
+
 ```{r}
-#| echo: false
 #| warning: false
+#| echo: false
 #| label: tbl-avgnumofdeathsmonthet
 #| tbl-cap: "Average Number of Deaths Per Month from 2016-2020 at Etobicoke Centre"
 
 #### Creating a Table to Demonstrate Average Number of Deaths Per Month from 2016-2020 at Etobicoke Centre ####
 
-et_all_avg_num_deaths_by_month_data|>
-  select(Month, "Average # of Deaths Registered.y","Average # of Deaths Registered.x.x", "Average # of Deaths Registered.y.y", "Average # of Deaths Registered.x.x.x", "Average # of Deaths Registered.y.y.y")|> #previous step created a duplicate column, use select() to remove the second column in dataset
-     kable(
-    col.names = c( #rename columns to be more meaningful
+
+et_all_avg_num_deaths_by_month_data |>
+  select(
+    Month,
+    "Average # of Deaths Registered.y",
+    "Average # of Deaths Registered.x.x",
+    "Average # of Deaths Registered.y.y",
+    "Average # of Deaths Registered.x.x.x",
+    "Average # of Deaths Registered.y.y.y"
+  ) |> #previous step created a duplicate column, use select() to remove the second column in dataset
+  kable(
+    col.names = c(#rename columns to be more meaningful
       "Month",
       "2016",
       "2017",
       "2018",
       "2019",
-      "2020"
-    ),
+      "2020"),
     digits = 0,
     booktabs = TRUE,
-    linesep = "") |>
-    add_header_above(c(" " = 1, "Average Number of Deaths" = 5)) |>
-  kable_styling(full_width = TRUE)
-
-
+    linesep = ""
+  ) |>
+  add_header_above(c(" " = 1, "Average Number of Deaths" = 5))
 
 ```
 
@@ -458,7 +376,7 @@ sc_all_avg_num_deaths_by_month_data <-
 #| echo: false
 #| warning: false
 #| label: tbl-avgnumofdeathsmonthsc
-#| tbl-cap: "Average Number of Deaths Per Month from 2016-2020 at Scarborough"
+#| tbl-cap: "Average Number of Deaths Per Month from 2016-2020 at Scarborough Centre"
 
 #### Creating a Table to Demonstrate Average Number of Deaths Per Month From 2016-2020 at Scarborough Centre ####
 
@@ -476,8 +394,7 @@ sc_all_avg_num_deaths_by_month_data|>
     digits = 0,
     booktabs = TRUE,
     linesep = "") |>
-  add_header_above(c(" " = 1, "Average Number of Deaths" = 5)) |>
-  kable_styling(full_width = TRUE)
+  add_header_above(c(" " = 1, "Average Number of Deaths" = 5)) 
 
 ```
 
@@ -577,10 +494,10 @@ ny_all_avg_num_deaths_by_month_data|>
     digits = 0,
     booktabs = TRUE,
     linesep = "") |>
-  add_header_above(c(" " = 1, "Average Number of Deaths" = 5)) |>
-  kable_styling(full_width = TRUE)
+  add_header_above(c(" " = 1, "Average Number of Deaths" = 5)) 
 ```
 
-\newpage
+
+\clearpage
 
 # References

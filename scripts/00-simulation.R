@@ -1,5 +1,5 @@
 #### Preamble ####
-# Purpose: Simulate and test data from Open Data Toronto's statistics on death registration. Link: https://open.toronto.ca/dataset/death-registry-statistics/
+# Purpose: Simulate from Open Data Toronto's statistics on death registration. Link: https://open.toronto.ca/dataset/death-registry-statistics/
 # include columns ID, Death Licenses, Civic Centre, Place of Death, Month (as placeholder for date)
 # Author: Chloe Thierstein
 # Email: chloe.thierstein@mail.utoronto.ca

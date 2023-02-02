@@ -6,8 +6,6 @@
 # Date: 23 January 2023
 # Prerequisites: Need to know where to find the City of Toronto death registry data
 
-#| include: false
-
 #### Workspace Set-up ####
 
 #### install.packages(tidyverse) ####
@@ -16,6 +14,10 @@
 #### install.packages("knitr") ####
 #### install.packages("RColorBrewer") ####
 #### install.packages("kableExtra") ####
+#### install.packages("bookdown") ####
+#### install.packages("rmarkdown") ####
+#### install.packages("patchwork") ####
+#### install.packages("here") ####
 
 library(tidyverse)
 library(opendatatoronto)
@@ -25,27 +27,16 @@ library(dplyr)
 library(knitr)
 library(RColorBrewer)
 library(kableExtra)
+library(bookdown)
+library(patchwork)
+library(readr)
+library(here)
 
-
-#### Read in Data ####
-raw_death_registry_data <-
-  read_csv(
-    file = 
-      "https://ckan0.cf.opendata.inter.prod-toronto.ca/dataset/cba07a90-984b-42d2-9131-701c8c2a9788/resource/cc418325-b3d0-4afd-ae64-ccb9b71c549c/download/Death%20Registry%20Statistics%20Data.csv",
-    show_col_types = FALSE,
-    skip = 0
-  )
-
-write_csv(
-  x = raw_death_registry_data,
-  file = "death_registry.csv"
-)
-
+#### Data Cleaning ####
 
 #### Clean Names ####
 cleaned_death_registry_data <-
   clean_names(raw_death_registry_data)
-
 
 #### Simplifying Date #### 
 cleaned_death_registry_data <-
@@ -57,16 +48,15 @@ cleaned_death_registry_data <-
   ) |>
   select(civic_centre, death_licenses, place_of_death, Year, Month)
 
-#### Removing 2021-2023 data ####
+#### Removing 2011-2015 and 2021-2023 Data for Relevance ####
 cleaned_death_registry_data <- cleaned_death_registry_data[-c(1:371,746:847), ] 
 
-
-#### Recoding Months to be more Meaningful ####
+#### Recoding Months to be More Meaningful ####
 cleaned_death_registry_data <- cleaned_death_registry_data |> 
   mutate( 
     Month = 
       recode( 
-        Month, 
+        Month, #abbreviated months to better fit graphs withotu losing meaning
         "01" = "Jan", 
         "02" = "Feb", 
         "03" = "Mar",
@@ -82,8 +72,7 @@ cleaned_death_registry_data <- cleaned_death_registry_data |>
       ) 
   )
 
-
-#### Recoding Civic Centres to be more Meaningful ####
+#### Recoding Civic Centres to be More Meaningful ####
 cleaned_death_registry_data <- cleaned_death_registry_data |> 
   mutate( 
     civic_centre = 
@@ -95,17 +84,19 @@ cleaned_death_registry_data <- cleaned_death_registry_data |>
       ) 
   )
 
-#### ordering months #####
+#### Ordering Months #####
 cleaned_death_registry_data$Month <- factor(cleaned_death_registry_data$Month, levels=c("Jan", "Feb","Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))
 
-
-#### filtering out toronto civic centre from data ####
+#### Filtering Out "Toronto" Civic Centre from Data Due to Missing Data ####
 cleaned_death_registry_data <- cleaned_death_registry_data |>
   filter(!grepl('TO', civic_centre))
 
-#### creating a CSV file for cleaned data ####
+#### turning years into factor ####
+cleaned_death_registry_data$Year <- as.factor(cleaned_death_registry_data$Year)
+
+#### Creating a CSV File for Cleaned Data ####
 write_csv(
   x = cleaned_death_registry_data,
-  file = "cleaned_death_registry.csv"
+  file = "cleaned_death_registry.csv"  #create cleaned data .csv file and store it in inputs folder
 )
 

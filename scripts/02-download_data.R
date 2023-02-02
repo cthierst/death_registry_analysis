@@ -5,14 +5,8 @@
 # Date: 23 January 2023
 # Prerequisites: Need to know where to find the City of Toronto death registry data
 
-#### workspace set-up ####
-#### install.packages(tidyverse) #####
-#### install.packages(janitor) #####
-
-library(tidyverse)
-library(janitor)
-
 #### Read in Data ####
+
 raw_death_registry_data <-
   read_csv(
     file = 
@@ -21,8 +15,9 @@ raw_death_registry_data <-
     skip = 0
   )
 
+#### Creating a CSV File for Raw Data ####
 write_csv(
   x = raw_death_registry_data,
-  file = "death_registry.csv"
+  file = "death_registry.csv" #create raw data .csv file and store it in inputs folder
 )
 
