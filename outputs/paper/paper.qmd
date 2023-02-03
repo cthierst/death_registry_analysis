@@ -65,7 +65,7 @@ The province of Ontario represents a large portion of deaths in Canada, taking o
 #| echo: false
 #| warning: false
 #| label: fig-1
-#| fig-cap: "Death Licenses Provided by All Civic Centres Yearly From 2016-2020 "
+#| fig-cap: "Death Licenses Registered at Three Toronto Civic Centres from 2016-2020"
 
 
 #### Creating Graph to Compare Years Against Death Licenses Given Out From 2016-2020 ####
@@ -83,13 +83,13 @@ ggplot(data=cleaned_death_registry_data, aes(x = Year, y = death_licenses, fill 
 
 ```
 
-When looking at @fig-1, however, we can see that from 2016 to 2018 to there was an increase in death licenses registered, as expected, followed by a slight drop in 2019. This drop in 2019 may be indicative of a backlog from Ontario's Vital Statistics in early 2019 which was cited as having delays of over three months, waiting for death, birth and marriage certificates [@citectvnews]. What is most important in @fig-1 is that when looking at the "2020" bar in @fig-1, we can see that the death licenses registered drops significantly in comparison to any of the previous 4 months.
+When looking at @fig-1, however, we can see that from 2016 to 2018 to there was an increase in death licenses registered, as expected, followed by a slight drop in 2019. This drop in 2019 may be indicative of a backlog from Ontario's Vital Statistics in early 2019 which was cited as having delays of over three months, waiting for death, birth and marriage certificates [@citectvnews]. What is most important in @fig-1 is that when looking at the "2020" bar in @fig-1, we can see that the death licenses registered drops significantly in comparison to any of the previous 4 months. However, the amount of death licenses registered in 2020 was inconsistent as can be seen in @fig-2.
 
 ```{r}
 #| echo: false
 #| warning: false
 #| label: fig-2
-#| fig-cap: "Death Licenses Provided by Month from 2016-2020 at Three Toronto Civic Centres"
+#| fig-cap: "Death Licenses Provided by Month at Three Toronto Civic Centres from 2016-2020"
 
 #### Creating Graph to Compare Months Against Death Licenses Given Out From 2016-2020, Including Visualization of Years ####
 
