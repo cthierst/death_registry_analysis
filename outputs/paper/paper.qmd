@@ -1,6 +1,6 @@
 ---
-title: "Death Registrations May Indicate a Discreptency Between Expected and Reported Data During the COVID-19 Pandemic"
-subtitle: "An Analysis of Death Registrations from 2016-2020"
+title: "Death Registrations May Indicate a Discreptency in Reported Data During the COVID-19 Pandemic"
+subtitle: "An Analysis of Death Registrations in Toronto from 2016-2020"
 author: "Chloe Thierstein"
 thanks: "Code and data are available at: https://github.com/cthierst/death_registry_analysis.git."
 date: "`r Sys.time()`"
@@ -78,7 +78,7 @@ ggplot(data=cleaned_death_registry_data, aes(x = Year, y = death_licenses, fill 
     y = "Death Licenses"
   ) +
   theme(legend.position = "none")+
-  scale_fill_brewer(palette="Set3")
+  scale_fill_brewer(palette="Set2")
 
 
 ```
@@ -103,7 +103,7 @@ ggplot(data=cleaned_death_registry_data, aes(x = Month, y = death_licenses, fill
     x = "Month",
     y = "Death Licenses"
   ) +
-  scale_fill_brewer(palette = "Set3")
+  scale_fill_brewer(palette = "Set2")
 ```
 
 when looking at @fig-2 we can see - death licenses provided by month and year from all three civic centres - highlights the spike in death licenses provided in May - this may indicate a spike in deaths near the beginning of COVID-19 pandemic, - \~need to find source to make this make sense\~

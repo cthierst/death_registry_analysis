@@ -1,5 +1,15 @@
-# Overview
+# Analysis of Toronto Death Registry Data
 
-Death registry statistics have been updated monthly since 2011 are available on the Open Data Toronto Portal. I use this data to analyze the
+This repository contains the code and data for "Death Registrations May Indicate a Discreptency in Reported Data During the COVID-19 Pandemic: An Analysis of Death Registrations in Toronto from 2016-2020."
 
-# Note on File Structure
+The data used in this paper can be found on the OpenDataToronto portal. This data is active and continues to be updated monthly.
+
+# File Structure
+
+outputs/paper/paper.qmd: Quarto file of paper file
+
+outputs/paper/paper.pdf: PDF file of paper
+
+scripts: Includes simulation, tests, download, and cleaned data
+
+inputs/data: Includes raw and cleaned data .csv files
