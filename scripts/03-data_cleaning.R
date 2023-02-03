@@ -14,7 +14,6 @@
 #### install.packages("knitr") ####
 #### install.packages("RColorBrewer") ####
 #### install.packages("kableExtra") ####
-#### install.packages("bookdown") ####
 #### install.packages("rmarkdown") ####
 #### install.packages("patchwork") ####
 #### install.packages("here") ####
@@ -27,7 +26,6 @@ library(dplyr)
 library(knitr)
 library(RColorBrewer)
 library(kableExtra)
-library(bookdown)
 library(patchwork)
 library(readr)
 library(here)
@@ -84,15 +82,15 @@ cleaned_death_registry_data <- cleaned_death_registry_data |>
       ) 
   )
 
-#### Ordering Months #####
-cleaned_death_registry_data$Month <- factor(cleaned_death_registry_data$Month, levels=c("Jan", "Feb","Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))
-
 #### Filtering Out "Toronto" Civic Centre from Data Due to Missing Data ####
 cleaned_death_registry_data <- cleaned_death_registry_data |>
   filter(!grepl('TO', civic_centre))
 
-#### turning years into factor ####
+#### Turning Years Into Factor ####
 cleaned_death_registry_data$Year <- as.factor(cleaned_death_registry_data$Year)
+
+#### Ordering Months #####
+cleaned_death_registry_data$Month <- factor(cleaned_death_registry_data$Month, levels=c("Jan", "Feb","Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))
 
 #### Creating a CSV File for Cleaned Data ####
 write_csv(

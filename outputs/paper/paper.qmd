@@ -1,19 +1,44 @@
 ---
-title: "Data on Death Registrations Illustrates Issues with Ontario's Records Maintenance"
+title: "Death Registrations May Indicate a Discreptency Between Expected and Reported Data During the COVID-19 Pandemic"
+subtitle: "An Analysis of Death Registrations from 2016-2020"
 author: "Chloe Thierstein"
 thanks: "Code and data are available at: https://github.com/cthierst/death_registry_analysis.git."
-date: "24 January 2023"
+date: "`r Sys.time()`"
 date-format: "D MMMM YYYY"
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence. - The abstract should be three or four sentences. The abstract must tell the reader the top-level finding. What is the one thing that we learn about the world because of this paper?"
+abstract: "The COVID-19 pandemic marked a significant shift in Canadian mortality rates in the year 2020. Using death registry data from three civic centres in the greater Toronto are from 2016 to 2020, we demonstrate that even data from a considerably reliable source may become distorted"
 format: pdf
 bibliography: references.bib
+fig-cap-location: top
 ---
+
+# 1 Introduction
+
+Canadian death registry statistics offer a useful tool in helping better our healthcare system as by monitoring trends in public health such as infectious diseases, suicide, and unintentional injuries they help the healthcare sector provide better services and resources, like screening and prevention programs [@citestatscan3]. However, maintaining this data may not always be done accurately which could cause confusion over our understanding of Canadian demography and health.
+
+In this paper we look at death registry statistics from three civic centres in the greater Toronto area, Etobicoke, Scarborough and North York between 2016 and 2020. From this data, we find that the death licenses provided by these centres during the first year of the COVID-19 pandemic (2020), are much lower than in previous years [@citeopendatatoronto2]. This is significant as Canada experienced an increase of 7.7% in deaths in 2020 [@citestatscan4], and 5.2% more deaths than would typically be expected when taking into account Canada's aging population [@citestatscan5]. We reason that this discrepancy in expected data versus reported data could be the result of strain and complications put onto record-keeping during this time similarly to what was seen in early 2019 with long delays in the distribution of death, birth and marriage certificates due to high online demand [@citectvnews]. Future work could look specifically at how strains on data reporting centres during the COVID-19 pandemic influenced data.
+
+This paper will begin with an overview of its data management, source and cleaning. Next we will briefly overview the drop off in trend from previous years in death registrations to begin our discussion. Next we will consider the relationship between death licenses provided at each civic centre over the period of 2016 to 2020, to better understand how the year 2020 differed from past years. Next, we discuss in more detail, death licenses provided by each civic centre to determine a possible cause for the uncharacteristic decline of death licenses in 2020. We will then compare the mean number of deaths from each civic centre to further gauge how these centres relate to rates of death registrations. Finally, we will consider the limitations of the data, including biases.
+
+# 2 Data
+
+## 2.1 Data Management
+
+This paper utilizes the R statistical programming language [@citeR], along with several packages. These packages are, tidyverse [@citetidyverse], janitor [@citejanitor], here [@citehere] and dplyr [@citedplyr]. The data being analyzed comes from Open Data Toronto and it is imported using the opendatatoronto package [@citeopendatatoronto]. All figures have been created using ggplot2 [@citeggplot2] and the tables have been created with knitr [@citeknitr] and kableExtra [@citekablextra], packages. The color styles in the graphs were created by using the RColorBrewer [@citercolorbrewer] package and any graph combinations were made using the Patchwork [@citepatchwork] package.
+
+## 2.2 Data Source and Cleaning
+
+The data comes from death registrations which are entered into the Registry Services Tracking System (RSTS) by Registry Services staff who are located at three of the civic centres, Etobicoke, North York and Scarborough [@citeopendatatoronto2]. It's creation supports the Vital Statistics Act, a Provincial legislation [@citeopendatatoronto2] which involve the collection of deaths, marriages, stillbirths, and live births [@citestatscan3]. This data set is updated monthly [@citeopendatatoronto2]. The variables from this data set represent the civic centres; "Etobicoke", "North York", and "Scarborough", number of death licenses registered in the month, place of death; "Outside City Limits" or "Toronto", and time period by month and year in which the death was registered [@citeopendatatoronto2].
+
+To properly analyze this data for the purposes of this paper certain data was removed including, all data for the years 2011-2015 and 2021-2023. This was done to ensure that the data set being worked with had sufficient and consistent data to draw from without being too broad in scope. Additionally, rows from the civic centre variable labelled "Toronto" were removed as death registrations at this location were especially low and its data input, sporadic. Finally, the variable for place of death was not included in the analysis of this data as it was not relevant to its narrative.
+
+## 2.3 Data Analysis
 
 ```{r}
 #| include: false
 
-#### workspace set-up ####
+#### Workspace Set-Up ####
 
+#### Load Library ####
 library(tidyverse)
 library(opendatatoronto)
 library(janitor)
@@ -22,100 +47,26 @@ library(dplyr)
 library(knitr)
 library(RColorBrewer)
 library(kableExtra)
-library(bookdown)
 library(patchwork)
 library(readr)
 library(here)
 
-#### import cleaned_death_registry.csv ####
+#### Import cleaned_death_registry.csv ####
 cleaned_death_registry_data <- read.csv(here::here("/Users/chloethierstein/Desktop/death_registry_analysis/inputs/data/cleaned_death_registry.csv"))
 
-#### turning years into factor ####
+#### Turning Years into Factors ####
 cleaned_death_registry_data$Year <- as.factor(cleaned_death_registry_data$Year)
+
 ```
 
-# Introduction
-
-two or three paragraphs of content. and there should be an additional final paragraph that sets out the remainder of the paper
-
-You can and should cross-reference sections and sub-sections. For instance, Section \@ref(data). Quarto automatically makes the sections lower case and adds a dash to spaces to generate labels, for instance, Section \@ref(first-discussion-point).
-
-\-\-\-\-\-\-\-\-\--
-
-During the period of 2011 and 2020, it is estimated that on average just under 100 thousand people died each year in Ontario, Canada [@citestatscan1]. The province of Ontario represents the location of a large portion of deaths in Canada as it takes on an estimated 37% of all deaths in Canada from 2011-2020 [@citestatscan1]. From 2011 to 2020, the population in Ontario has grown from over 13 million to just under 15 million [@citestatscan2]. Significantly, the city of Toronto makes up approximately 44% of the population of Ontario [@citestatscan2].
-
-\-\-\-\-\-\-\-\-\-\--
-
-In this paper I will be analyzing death registry data from four civic centers in the greater Toronto area, Etobicoke, North York, and Scarborough. First, I will compare rates of death registration from these civic centers over the period of 2011-2020. Next, I will compare rates of death registration against place of death in order to discuss the rate of deaths inside and outside the Toronto city limits. Finally, I will discuss trends in death registrations from each civic center.
-
-\-\-\-\-\-\-\-\-\--
-
-# Data
-
-data section should thoroughly and precisely discuss the source of the data and the bias this brings (ethical, statistical, and otherwise). comprehensively describe and summarize the data using text, graphs, and tables must be made iwth knitr or gt. graphs must show the actual data, or as close to it as possible, not summary statistics. (Graphs and tables should be cross-references in the text e.g., 'Table 1 shows...')
-
-\-\-\-\-\-\-\-\-\-\-\--
-
-Analysis for this paper utilizes R the statistical programming language [@citeR], along with several packages. These packages are, tidyverse [@citetidyverse], janitor [@citejanitor], and dplyr [@citedplyr]. The data I am analyzing come from Open Data Toronto and it is imported using the opendatatoronto package [@citeopendatatoronto]. **
-
-All figures in this paper have been created using ggplot2 [@citeggplot2] and the tables have been created with knitr [@citeknitr] and kableExtra [@citekablextra], packages. The color styles in my graph were created by using the RColorBrewer [@citercolorbrewer] package and any graph combinations were made using the Patchwork [@citepatchwork] package.**
-
-\-\-\-\-\-\-\-\-\-\-\--
-
-The data I am analyzing comes from Registry Services staff located in three of the civic centers (Etobicoke, North York, Scarborough) and
-
-\-\-\-\-\-\-\-\-\-\-\--
-
-"This dataset includes information relating to the registration of deaths documented by Registry Services staff located in four of the civic centres (Scarborough, North York, Toronto and Etobicoke). Registration of death data is entered into the Registry Services Tracking System (RSTS), from which aggregate statistical information is generated to create the dataset. The dataset resides in an Oracle database in the City's environment.
-
-\-\-\--
-
-The data I am analyzing comes from death registrations which are entered into the Registry Services Tracking System (RSTS) by Registry Services staff located at three of the civic centres (Etobicoke, North York, Scarborough) .
-
-@citeopendatatoronto2
-
-\-\-\--
-
-The dataset is created in support of the Vital Statistics Act, which is a Provincial legislation. The dataset also supports the City's operational requirements and business functions." [@citeopendatatoronto]
-
-"\_id = unique row identifier for Open Data database
-
-civic_centre = civic centre code
-
-death licenses = number of deaths registered in the month
-
-place_of_death = place where death occurred
-
-time_period = month death registered" [@citeopendatatoronto]
-
-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
-
-(@fig-deathlicensesbymonthandyear)
+The province of Ontario represents a large portion of deaths in Canada, taking on an estimated 37% of Canadian mortality from 2016-2020 [@citestatscan1]. It is also estimated that on average, that just over 100 thousand people have died each year in Ontario between 2016 and 2020 [@citestatscan1]. We may suggest then, that Toronto makes up a large portion of this mortality rate, as it makes up approximately 44% of the Ontarian population [@citestatscan2]. Additionally, Canada has an aging population, meaning that it's mortality rate is expected to rise every year although it rose exponentially due to the COVID-19 pandemic [@citestatscan4]. Therefore, we may suspect that the COVID-19 pandemic would increase the mortality rate significantly in Toronto as Canada saw an increase of 7.7% in deaths in 2020 [@citestatscan4].
 
 ```{r}
 #| echo: false
 #| warning: false
-#| label: fig-deathlicensesbymonthandyear
-#| fig-cap: "Death Licenses Given Out by Month from 2016-2020 at Three Toronto Civic Centres"
+#| label: fig-1
+#| fig-cap: "Death Licenses Provided by All Civic Centres Yearly From 2016-2020 "
 
-#### Creating Graph to Compare Months Against Death Licenses Given Out From 2016-2020, Including Visualization of Years ####
-
-ggplot(data=cleaned_death_registry_data, aes(x = Month, y = death_licenses, fill = Year)) +
-  theme_classic() +
-  geom_bar(stat = "identity") +
-  labs(
-    x = "Month",
-    y = "Death Licenses"
-  ) +
-  scale_fill_brewer(palette = "Set3")
-
-```
-
-```{r}
-#| echo: false
-#| warning: false
-#| label: fig-deathlicensesbyyearsolid
-#| fig-cap: "Death Licenses Given Out by All Civic Centres Yearly From 2016-2020 "
 
 #### Creating Graph to Compare Years Against Death Licenses Given Out From 2016-2020 ####
 
@@ -128,7 +79,34 @@ ggplot(data=cleaned_death_registry_data, aes(x = Year, y = death_licenses, fill 
   ) +
   theme(legend.position = "none")+
   scale_fill_brewer(palette="Set3")
+
+
 ```
+
+When looking at @fig-1, however, we can see that from 2016 to 2018 to there was an increase in death licenses registered, as expected, followed by a slight drop in 2019. This drop in 2019 may be indicative of a backlog from Ontario's Vital Statistics in early 2019 which was cited as having delays of over three months, waiting for death, birth and marriage certificates [@citectvnews]. What is most important in @fig-1 is that when looking at the "2020" bar in @fig-1, we can see that the death licenses registered drops significantly in comparison to any of the previous 4 months.
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: fig-2
+#| fig-cap: "Death Licenses Provided by Month from 2016-2020 at Three Toronto Civic Centres"
+
+#### Creating Graph to Compare Months Against Death Licenses Given Out From 2016-2020, Including Visualization of Years ####
+
+#### Ordering Months #####
+cleaned_death_registry_data$Month <- factor(cleaned_death_registry_data$Month, levels=c("Jan", "Feb","Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))
+
+ggplot(data=cleaned_death_registry_data, aes(x = Month, y = death_licenses, fill = Year)) +
+  theme_classic() +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Month",
+    y = "Death Licenses"
+  ) +
+  scale_fill_brewer(palette = "Set3")
+```
+
+when looking at @fig-2 we can see - death licenses provided by month and year from all three civic centres - highlights the spike in death licenses provided in May - this may indicate a spike in deaths near the beginning of COVID-19 pandemic, - \~need to find source to make this make sense\~
 
 ```{r}
 #| include: false
@@ -149,7 +127,6 @@ month_by_death_license <- ggplot(data=cleaned_death_registry_data, aes(x = Month
   theme(legend.position = "none") + #include legend at bottom to ensure readability when using patchwork package
   theme(axis.title.y = element_text(size = 10)) +
   theme(axis.title.x = element_text(size = 10))
-
 
 ```
 
@@ -173,12 +150,13 @@ year_by_death_license <-  ggplot(data=cleaned_death_registry_data, aes(x = Year,
   theme(axis.title.x = element_text(size = 10))
 ```
 
-
 ```{r}
 #| echo: false
 #| warning: false
-#| label: fig-deathlicensesmonthly
-#| fig-cap: "Death Licenses Given Out by Each Civic Centre Yearly and Monthly Over the Period of 2016-2020"
+#| label: fig-3
+#| fig-cap: "Death Licenses Provided by Each Civic Centre Yearly and Monthly from 2016-2020"
+
+
 
 #### Using Patchwork Package to Combine Two Graphs ####
 
@@ -187,7 +165,7 @@ year_by_death_license <-  ggplot(data=cleaned_death_registry_data, aes(x = Year,
   plot_layout(ncol = 1)
 ```
 
-\newpage
+Looking briefly at @fig-3 we can see a surprising drop in death licenses provided in 2020. \###### this is surprising as death rates are said to have increased during the pandemic, yet there is a signficant decline \###### why? explain...
 
 ```{r}
 #| include: false
@@ -264,15 +242,14 @@ et_all_avg_num_deaths_by_month_data <-
 
 ```
 
-
 ```{r}
 #| warning: false
 #| echo: false
-#| label: tbl-avgnumofdeathsmonthet
+#| label: tbl-1
 #| tbl-cap: "Average Number of Deaths Per Month from 2016-2020 at Etobicoke Centre"
 
-#### Creating a Table to Demonstrate Average Number of Deaths Per Month from 2016-2020 at Etobicoke Centre ####
 
+#### Creating a Table to Demonstrate Average Number of Deaths Per Month from 2016-2020 at Etobicoke Centre ####
 
 et_all_avg_num_deaths_by_month_data |>
   select(
@@ -375,7 +352,7 @@ sc_all_avg_num_deaths_by_month_data <-
 ```{r}
 #| echo: false
 #| warning: false
-#| label: tbl-avgnumofdeathsmonthsc
+#| label: tbl-2
 #| tbl-cap: "Average Number of Deaths Per Month from 2016-2020 at Scarborough Centre"
 
 #### Creating a Table to Demonstrate Average Number of Deaths Per Month From 2016-2020 at Scarborough Centre ####
@@ -475,7 +452,7 @@ ny_all_avg_num_deaths_by_month_data <-
 ```{r}
 #| echo: false
 #| warning: false
-#| label: tbl-avgnumofdeathsmonthny
+#| label: tbl-3
 #| tbl-cap: "Average Number of Deaths Per Month from 2016-2020 at North York Centre"
 
 #### Creating a Table to Demonstrate Average Number of Deaths Per Month From 2016-2020 at North York Centre ####
@@ -496,7 +473,6 @@ ny_all_avg_num_deaths_by_month_data|>
     linesep = "") |>
   add_header_above(c(" " = 1, "Average Number of Deaths" = 5)) 
 ```
-
 
 \clearpage
 
