@@ -6,7 +6,7 @@ The data used in this paper can be found on the OpenDataToronto portal. This dat
 
 # File Structure
 
-outputs/paper/paper.qmd: Quarto file of paper file
+"outputs/paper/paper.qmd:" Quarto file of paper file
 
 outputs/paper/paper.pdf: PDF file of paper
 
