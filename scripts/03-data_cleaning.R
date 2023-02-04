@@ -8,16 +8,19 @@
 
 #### Workspace Set-up ####
 
-#### install.packages(tidyverse) ####
-#### install.packages(janitor) ####
-#### install.packages(ggplot2) ####
+#### Need to Install These Packages to Run Script ####
+#### install.packages("tidyverse") ####
+#### install.packages("opendatatoronto") ####
+#### install.packages("janitor") ####
+#### install.packages("ggplot2") ####
 #### install.packages("knitr") ####
 #### install.packages("RColorBrewer") ####
 #### install.packages("kableExtra") ####
-#### install.packages("rmarkdown") ####
 #### install.packages("patchwork") ####
+#### install.packages("readr") ####
 #### install.packages("here") ####
 
+#### Loading in Libraries ####
 library(tidyverse)
 library(opendatatoronto)
 library(janitor)
