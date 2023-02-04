@@ -1,12 +1,15 @@
 ---
-title: "Death Registrations May Indicate a Discreptency in Reported Data During the COVID-19 Pandemic"
-subtitle: "An Analysis of Death Registrations in Toronto from 2016-2020"
+title: "Death License Registrations May Indicate a Discreptency in Reported Data During the COVID-19 Pandemic"
+subtitle: "An Analysis of Death License Registrations in Toronto from 2016-2020"
 author: "Chloe Thierstein"
 thanks: "Code and data are available at: https://github.com/cthierst/death_registry_analysis.git."
-date: "`r Sys.time()`"
+date: "February 3, 2023"
 date-format: "D MMMM YYYY"
-abstract: "The COVID-19 pandemic marked a significant shift in Canadian mortality rates in the year 2020. Using death registry data from three civic centres in the greater Toronto are from 2016 to 2020, we demonstrate that even data from a considerably reliable source may become distorted"
-format: pdf
+format: 
+  pdf:
+    documentclass: article
+    geometry: margin = 1in
+    abstract:  "Death registry statistics offer us a useful tool to better out healthcare system, from monitoring trends to government policy, it is essential to our understanding of the world around us. The COVID-19 pandemic marked a significant shift in the Canadian mortality rate in the year 2020. This paper utilizes death registry data from three civic centres in the greater Toronto area from 2016 to 2020, alongside secondary sources and research. From this work, we demonstrate that even data from considerably reliable sources may become distorted if enough care is not taken in its recording and the world around the data is not considered."
 bibliography: references.bib
 fig-cap-location: top
 ---
@@ -15,9 +18,9 @@ fig-cap-location: top
 
 Canadian death registry statistics offer a useful tool in helping better our healthcare system as by monitoring trends in public health such as infectious diseases, suicide, and unintentional injuries they help the healthcare sector provide better services and resources, like screening and prevention programs [@citestatscan3]. However, maintaining this data may not always be done accurately which could cause confusion over our understanding of Canadian demography and health.
 
-In this paper we look at death registry statistics from three civic centres in the greater Toronto area, Etobicoke, Scarborough and North York between 2016 and 2020. From this data, we find that the death licenses provided by these centres during the first year of the COVID-19 pandemic (2020), are much lower than in previous years [@citeopendatatoronto2]. This is significant as Canada experienced an increase of 7.7% in deaths in 2020 [@citestatscan4], and 5.2% more deaths than would typically be expected when taking into account Canada's aging population [@citestatscan5]. We reason that this discrepancy in expected data versus reported data could be the result of strain and complications put onto record-keeping during this time similarly to what was seen in early 2019 with long delays in the distribution of death, birth and marriage certificates due to high online demand [@citectvnews]. Future work could look specifically at how strains on data reporting centres during the COVID-19 pandemic influenced data.
+In this paper we look at death registry statistics from three civic centres in the greater Toronto area, Etobicoke, Scarborough and North York between 2016 and 2020. From this data, we find that the death licenses provided by these centres during the first year of the COVID-19 pandemic (2020), are much lower than in previous years [@citeopendatatoronto2]. This is significant as Canada experienced an increase of 7.7% in deaths in 2020 [@citestatscan4], and 5.2% more deaths than would typically be expected when taking into account Canada's aging population [@citestatscan5]. We reason that this discrepancy in expected data versus reported data could be the result of strain and complications put onto record-keeping during this time similarly to what was seen in early 2019 with long delays in the distribution of death, birth and marriage certificates due to high online demand [@citectvnews]. Future work could look specifically at how strain on data reporting centres during the COVID-19 pandemic influenced data and mitigation techniques for the future
 
-This paper will begin with an overview of its data management, source and cleaning. Next we will briefly overview the drop off in trend from previous years in death registrations to begin our discussion. Next we will consider the relationship between death licenses provided at each civic centre over the period of 2016 to 2020, to better understand how the year 2020 differed from past years. Next, we discuss in more detail, death licenses provided by each civic centre to determine a possible cause for the uncharacteristic decline of death licenses in 2020. We will then compare the mean number of deaths from each civic centre to further gauge how these centres relate to rates of death registrations. Finally, we will consider the limitations of the data, including biases.
+This paper will begin with an overview of its data management, source and cleaning. Next we will briefly overview the drop off in trend from previous years in death registrations to begin our discussion. Next we will consider the relationship between death licenses provided at each civic centre over the period of 2016 to 2020, to better understand how the year 2020 differed from past years. Next, we discuss in more detail, death licenses provided by each civic centre to determine a possible cause for the uncharacteristic decline of death licenses in 2020. We will then look at the mean number of deaths from each civic centre to further gauge how these centres relate to rates of death registrations. Finally, we will consider the limitations of the data, including biases.
 
 # 2 Data
 
@@ -52,7 +55,7 @@ library(readr)
 library(here)
 
 #### Import cleaned_death_registry.csv ####
-cleaned_death_registry_data <- read.csv(here::here("/Users/chloethierstein/Desktop/death_registry_analysis/inputs/data/cleaned_death_registry.csv"))
+cleaned_death_registry_data <- read.csv(here::here("./inputs/data/cleaned_death_registry.csv"))
 
 #### Turning Years into Factors ####
 cleaned_death_registry_data$Year <- as.factor(cleaned_death_registry_data$Year)
@@ -75,7 +78,7 @@ ggplot(data=cleaned_death_registry_data, aes(x = Year, y = death_licenses, fill 
   theme_classic() + 
   labs(
     x = "Year",
-    y = "Death Licenses"
+    y = "# of Death Licenses"
   ) +
   theme(legend.position = "none")+
   scale_fill_brewer(palette="Set2")
@@ -83,13 +86,13 @@ ggplot(data=cleaned_death_registry_data, aes(x = Year, y = death_licenses, fill 
 
 ```
 
-When looking at @fig-1, however, we can see that from 2016 to 2018 to there was an increase in death licenses registered, as expected, followed by a slight drop in 2019. This drop in 2019 may be indicative of a backlog from Ontario's Vital Statistics in early 2019 which was cited as having delays of over three months, waiting for death, birth and marriage certificates [@citectvnews]. What is most important in @fig-1 is that when looking at the "2020" bar in @fig-1, we can see that the death licenses registered drops significantly in comparison to any of the previous 4 months. However, the amount of death licenses registered in 2020 was inconsistent as can be seen in @fig-2.
+When looking at @fig-1, however, we can see that from 2016 to 2018 to there was an increase in death licenses registered, as expected, followed by a slight drop in 2019. This drop in 2019 may be indicative of a backlog from Ontario's Vital Statistics in early 2019 which was cited as having delays of over three months, waiting for death, birth and marriage certificates [@citectvnews]. What is most important in @fig-1 is that when looking at the "2020" bar in @fig-1, we can see that the death licenses registered drops significantly in comparison to any of the previous 4 months. However, the amount of death licenses registered each month in 2020 was inconsistent as can be seen in @fig-2.
 
 ```{r}
 #| echo: false
 #| warning: false
 #| label: fig-2
-#| fig-cap: "Death Licenses Provided by Month at Three Toronto Civic Centres from 2016-2020"
+#| fig-cap: "Death Licenses Registered by Month at Three Toronto Civic Centres from 2016-2020"
 
 #### Creating Graph to Compare Months Against Death Licenses Given Out From 2016-2020, Including Visualization of Years ####
 
@@ -101,12 +104,18 @@ ggplot(data=cleaned_death_registry_data, aes(x = Month, y = death_licenses, fill
   geom_bar(stat = "identity") +
   labs(
     x = "Month",
-    y = "Death Licenses"
+    y = "# of Death Licenses"
   ) +
   scale_fill_brewer(palette = "Set2")
 ```
 
-when looking at @fig-2 we can see - death licenses provided by month and year from all three civic centres - highlights the spike in death licenses provided in May - this may indicate a spike in deaths near the beginning of COVID-19 pandemic, - \~need to find source to make this make sense\~
+\newpage
+
+By looking at @fig-2 we can see that, generally, each month is relatively consistent in the amount of death licenses registered from the three civic centres from 2016 to 2019 with a few variations. However, when looking at 2020, we notice significantly lower rates of death license registration each month overall in comparison to past years with the exception of May and November. In the later, we see death license registrations that are nearly balanced with previous years. Whereas in May, there is a large spike in death license registration that far surpasses any month's death license registration in the previous four years.
+
+Looking at May's spike without knowing the context of the years, we may assume that it is a particularly deadly month, however that we can see that the spike in May, shown in @fig-2, is likely indicative of the first wave of COVID-19 in Canada hitting its peak at the beginning of the month before declining [@citejamanetwork]. This makes sense, however, COVID-19 infections were not the only factor driving the increased death rates in Canada during 2020. There were indirect consequences of the pandemic which lead to the higher death rate in Canada. For example, there were over four-thousand deaths from accidental poisonings which was nearly one-thousand more than in 2019 [@citestatscan4]. By understanding that the increase in the Canadian death rate in 2020 was not only caused by COVID-19 infections, we can see the complexity of the situation. Although the continued decline in death licenses registered from these civic centres during a year that saw an unexpected 5.2% [@citestatscan5] rise in deaths indicates a potential issue in the reporting done at these civic centres.
+
+@fig-3 demonstrates how many death licenses were registered at each civic centre, Etobicoke, North York and Scarborough from 2016 to 2020, both monthly and yearly. From @fig-3 we can see that, generally, Scarborough registers the most death licenses, followed by Etobicoke and finally North York. Interestingly, in 2020, Etobicoke largely overtook Scarborough in death license registrations while simulataneously registered more death licenses than it had in the previous four years. This could indicate that the Etobicoke centre was taking on more work from other civic centres as it was perhaps less overwhelmed during the COVID-19 pandemic. However, more data would be needed to confirm this.
 
 ```{r}
 #| include: false
@@ -120,7 +129,7 @@ month_by_death_license <- ggplot(data=cleaned_death_registry_data, aes(x = Month
   theme_classic() + 
   labs(
     x = "Month",
-    y = "Death Licenses",
+    y = "# Death Licenses",
     fill = "Civic Centre"
   ) +
   scale_fill_brewer(palette="Set2")+
@@ -141,7 +150,7 @@ year_by_death_license <-  ggplot(data=cleaned_death_registry_data, aes(x = Year,
   theme_classic() + 
   labs(
     x = "Year",
-    y = "Death Licenses",
+    y = "# Death Licenses",
     fill = "Civic Centre"
   )+
   scale_fill_brewer(palette="Set2")+
@@ -154,7 +163,7 @@ year_by_death_license <-  ggplot(data=cleaned_death_registry_data, aes(x = Year,
 #| echo: false
 #| warning: false
 #| label: fig-3
-#| fig-cap: "Death Licenses Provided by Each Civic Centre Yearly and Monthly from 2016-2020"
+#| fig-cap: "Monthly and Yearly Number of Death Licenses Registered by Each Civic Centre from 2016-2020"
 
 
 
@@ -164,8 +173,6 @@ year_by_death_license <-  ggplot(data=cleaned_death_registry_data, aes(x = Year,
   plot_annotation(tag_levels = 'A') +
   plot_layout(ncol = 1)
 ```
-
-Looking briefly at @fig-3 we can see a surprising drop in death licenses provided in 2020. \###### this is surprising as death rates are said to have increased during the pandemic, yet there is a signficant decline \###### why? explain...
 
 ```{r}
 #| include: false
@@ -272,7 +279,7 @@ et_all_avg_num_deaths_by_month_data |>
     booktabs = TRUE,
     linesep = ""
   ) |>
-  add_header_above(c(" " = 1, "Average Number of Deaths" = 5))
+  add_header_above(c(" " = 1, "# of Death License Registrations" = 5))
 
 ```
 
@@ -371,7 +378,7 @@ sc_all_avg_num_deaths_by_month_data|>
     digits = 0,
     booktabs = TRUE,
     linesep = "") |>
-  add_header_above(c(" " = 1, "Average Number of Deaths" = 5)) 
+  add_header_above(c(" " = 1, "# of Death License Registrations" = 5)) 
 
 ```
 
@@ -471,8 +478,14 @@ ny_all_avg_num_deaths_by_month_data|>
     digits = 0,
     booktabs = TRUE,
     linesep = "") |>
-  add_header_above(c(" " = 1, "Average Number of Deaths" = 5)) 
+  add_header_above(c(" " = 1, "# of Death License Registrations" = 5)) 
 ```
+
+\newpage
+
+Many of the trends spoken about previously can be seen explicitly in @tbl-1, @tbl-2, and @tbl-3. These tables present the average number of death licenses registered per month from 2016 to 2020 at each civic centre. These tables allow us to better grasp the variability in death licenses registered each month from 2016-2020. High variations in amount of death licenses registered can be seen mostly between months, although between years these variations become much smaller. This is important as upon first glance one would not assume inherently that the data actually shows much less death license registrations in 2020.
+
+While more data and research needs to be done to fully understand the story of data collection and reporting during the COVID-19 pandemic, this paper looks at a screenshot of death registry data from three civic centres between 2016 and 2020. By doing this, we attempt to better understanding the significance of data collection and how it may be impacted by outside conditions. We suggest that there is data missing from the report due to a variety of factors and reason that pressure and complications but onto data-keeping centres during the COVID-19 pandemic may be to blame. We encourage future inquiries to look specifically at how strain put on data reporting centres during the COVID-19 pandemic influenced data and how to mitigate these strains in the future.
 
 \clearpage
 
