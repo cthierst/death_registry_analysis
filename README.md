@@ -1,6 +1,6 @@
 # Analysis of Toronto Death Registry Data
 
-This repository contains the code and data for "Death Registrations May Indicate a Discreptency in Reported Data During the COVID-19 Pandemic: An Analysis of Death Registrations in Toronto from 2016-2020."
+This repository contains the code and data for "Death License Registrations May Indicate a Discrepancy in Reported Data During the COVID-19 Pandemic: An Analysis of Death Registrations in Toronto from 2016-2020."
 
 The data used in this paper can be found on the OpenDataToronto portal. This data is active and continues to be updated monthly.
 
@@ -26,4 +26,4 @@ scripts
 
 inputs/data
 
--    Includes raw and cleaned data .csv files
+-   Includes raw and cleaned data .csv files
