@@ -1,6 +1,6 @@
 
 #### Preamble ####
-# Purpose: Read in data from Open Data Toronto and clean the civic centre data from 2012 downloaded from Open Data Toronto's statistics on death registration.Link: https://open.toronto.ca/dataset/death-registry-statistics/
+# Purpose: Clean data from Open Data Toronto and clean the civic centre data from 2012 downloaded from Open Data Toronto's statistics on death registration.Link: https://open.toronto.ca/dataset/death-registry-statistics/
 # Author: Chloe Thierstein
 # Email: chloe.thierstein@utoronto.ca
 # Date: 23 January 2023
