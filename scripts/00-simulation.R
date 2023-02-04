@@ -1,11 +1,10 @@
 #### Preamble ####
-# Purpose: Simulate from Open Data Toronto's statistics on death registration. Link: https://open.toronto.ca/dataset/death-registry-statistics/
+# Purpose: Simulate and test data based on Open Data Toronto's statistics on death registration. Link: https://open.toronto.ca/dataset/death-registry-statistics/
 # include columns ID, Death Licenses, Civic Centre, Place of Death, Month (as placeholder for date)
 # Author: Chloe Thierstein
 # Email: chloe.thierstein@mail.utoronto.ca
 # Date: 23 January 2023
 # Prerequisites: Need to know where to find the City of Toronto death registry data
-
 
 
 library(tibble)
