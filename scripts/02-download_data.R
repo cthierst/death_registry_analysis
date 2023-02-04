@@ -5,6 +5,16 @@
 # Date: 23 January 2023
 # Prerequisites: Need to know where to find the City of Toronto death registry data
 
+#### Workspace Set-up ####
+
+#### Installing Packages ####
+
+#### install.packages("tidyverse")
+
+#### Opening Libraries ####
+
+library(tidyverse)
+
 #### Read in Data ####
 
 raw_death_registry_data <-
