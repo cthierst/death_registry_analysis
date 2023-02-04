@@ -1,5 +1,5 @@
 ---
-title: "Death License Registrations May Indicate a Discreptency in Reported Data During the COVID-19 Pandemic"
+title: "Death License Registrations May Indicate a Discrepency in Reported Data During the COVID-19 Pandemic"
 subtitle: "An Analysis of Death License Registrations in Toronto from 2016-2020"
 author: "Chloe Thierstein"
 thanks: "Code and data are available at: https://github.com/cthierst/death_registry_analysis.git."
